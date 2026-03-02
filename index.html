@@ -242,7 +242,7 @@
                     window.speechSynthesis.cancel();
                     setIsSpeaking(false);
                 } else {
-                    const cleanText = currentText.replace(/\/g, '');
+                    const cleanText = currentText.split('[').map(part => part.includes(']') ? part.split(']')[1] : part).join('');
                     const utt = new SpeechSynthesisUtterance(cleanText);
                     utt.lang = language === 'de' ? 'de-DE' : 'hu-HU';
                     utt.onend = () => setIsSpeaking(false);
