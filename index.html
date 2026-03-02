@@ -13,12 +13,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=MedievalSharp&display=swap');
+        .font-serif { font-family: 'Inter', serif; }
         .font-display { font-family: 'MedievalSharp', cursive; }
-        .font-serif { font-family: 'Inter', sans-serif; }
         #map { height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; z-index: 0; }
-        .parchment { background-color: #fdf6e3; border: 4px double #8b5a2b; }
         .line-clamp-4 { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .sepia-effect { filter: sepia(0.3) contrast(1.1); }
     </style>
 </head>
 <body>
@@ -29,93 +29,46 @@
 
         const locations = [
             {
-                name: 'Pannonische Kulturroute',
-                name_hu: 'Pannon Kulturút',
-                coords: [47.23, 16.35],
-                text: 'Willkommen auf der Zeitreise durch das Südburgenland und das Komitat Vas. Entdecken Sie den Alltag im Mittelalter – von Verteidigung bis Weinbau.',
-                text_hu: 'Üdvözöljük egy időutazáson Dél-Burgenlandban és Vas vármegyében. Fedezze fel a középkori mindennapokat.',
-                image: 'https://images.unsplash.com/photo-1599412227383-b7d4751c8765?auto=format&fit=crop&q=80&w=800'
+                name: 'Pannonische Kulturroute - Alltag im Mittelalter',
+                name_hu: 'Pannon Kulturút - Mindennapok a középkorban',
+                coords: [47.22, 16.35],
+                text: 'Willkommen auf einer Zeitreise durch das Südburgenland und das Komitat Vas. Entdecken Sie das gemeinsame Erbe einer Region, die mittelalterlichen Alltag – von Arbeit und Handel über Glaube bis hin zur Verteidigung – lebendig erlebbar macht[cite: 1292, 1293].',
+                text_hu: 'Üdvözöljük egy időutazáson Dél-Burgenlandban és Vas vármegyében. Fedezze fel egy olyan régió közös örökségét, amely a középkori mindennapokat élénken mutatja be[cite: 1292, 1293].',
+                image: 'https://images.unsplash.com/photo-1599412227383-b7d4751c8765?q=80&w=800'
             },
             {
                 name: 'Litzelsdorf: Ringwallanlage',
                 name_hu: 'Litzelsdorf: Sáncrendszer',
                 coords: [47.2033, 16.1325],
-                [cite_start]text: 'Rekonstruierte mittelalterliche Ringwallanlage als multifunktionale Bühne[cite: 276]. [cite_start]Macht historische Verteidigungsarchitektur erlebbar[cite: 276].',
-                [cite_start]text_hu: 'Rekonstruált középkori sáncrendszer, amely színpadként szolgál[cite: 276].',
-                image: 'https://images.unsplash.com/photo-1590059349890-449e79f22501?q=80&w=800'
+                text: 'Rekonstruierte mittelalterliche Ringwallanlage als multifunktionale Bühne. Macht die historische Verteidigungsarchitektur erlebbar[cite: 276, 1519].',
+                text_hu: 'Rekonstruált középkori sáncrendszer, amely többfunkciós színpadként szolgál[cite: 276, 1519].',
+                image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=800'
             },
             {
-                name: 'Litzelsdorf: Hügelgräber',
-                name_hu: 'Litzelsdorf: Halomsírok',
-                coords: [47.2150, 16.1200],
-                [cite_start]text: '36 Grabhügel aus der Bronzezeit bis zur römischen Kaiserzeit[cite: 201]. [cite_start]Zeugnis einer Siedlungskontinuität[cite: 555].',
-                [cite_start]text_hu: '36 halomsír a bronzkortól a római császárkorig[cite: 201].',
-                image: 'https://images.unsplash.com/photo-1582050041567-9cfdd330d545?q=80&w=800'
+                name: 'Litzelsdorf: Aussichtsturm',
+                name_hu: 'Litzelsdorf: Kilátó',
+                coords: [47.2050, 16.1350],
+                text: 'Neuer Aussichtsturm im Naturraum zur Inszenierung der historischen Identität der Gemeinde[cite: 276, 1519].',
+                text_hu: 'Új kilátó a természetben a közösség történelmi identitásának bemutatására[cite: 276, 1519].',
+                image: 'https://images.unsplash.com/photo-1547407139-3c921a66005c?q=80&w=800'
             },
             {
-                name: 'Kemeten: Hofweingarten',
-                name_hu: 'Kemeten: Udvari szőlőskert',
-                coords: [47.2500, 16.1600],
-                [cite_start]text: 'Reaktivierung des mittelalterlichen Weingartens als landschaftsprägendes Kulturgut[cite: 400].',
-                [cite_start]text_hu: 'A középkori szőlőskert reaktiválása kulturális értékként[cite: 400].',
-                image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?q=80&w=800'
-            },
-            {
-                name: 'Kemeten: Weinschank im Stadel',
-                name_hu: 'Kemeten: Borozó a csűrben',
-                coords: [47.2475, 16.1511],
-                [cite_start]text: 'Das Böhmhaus im Dorfzentrum wurde zur Weinschank umgebaut und dient als touristischer Ankerpunkt[cite: 401].',
-                [cite_start]text_hu: 'A falu központjában található Böhm-ház borozóvá alakult[cite: 401].',
-                image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800'
-            },
-            {
-                name: 'Wolfau: Zoll und Maut',
-                name_hu: 'Wolfau: Vám és illeték',
+                name: 'Wolfau: Erlebnisareal Zoll und Maut',
+                name_hu: 'Wolfau: Vám és illeték élményterület',
                 coords: [47.2580, 16.0950],
-                [cite_start]text: 'Themenbereich an der historischen Lafnitzgrenze über Grenze, Zoll und Maut im Mittelalter[cite: 288].',
-                [cite_start]text_hu: 'Tematikus terület a Lapincs történelmi határvonalán[cite: 288].',
-                image: 'https://images.unsplash.com/photo-1590059349890-449e79f22501?q=80&w=800'
-            },
-            {
-                name: 'Wolfau: Tschartaken-Turm',
-                name_hu: 'Wolfau: Csárdák-torony',
-                coords: [47.2600, 16.1050],
-                [cite_start]text: 'Wachtürme nach ungarischem Vorbild, die die einstige Grenzidentität Wolfaus verdeutlichen[cite: 288].',
-                [cite_start]text_hu: 'Magyar mintára készült őrtorony[cite: 288].',
-                image: 'https://images.unsplash.com/photo-1545127398-14699f921c4b?q=80&w=800'
-            },
-            {
-                name: 'Szombathely: Ruinengarten',
-                name_hu: 'Szombathely: Romkert',
-                coords: [47.2307, 16.6219],
-                [cite_start]text: 'Reste der mittelalterlichen Burg und des römischen Kaiserpalastes auf den Ruinen von Savaria[cite: 594].',
-                [cite_start]text_hu: 'Középkori vár és római császári palota maradványai[cite: 594].',
-                image: 'https://images.unsplash.com/photo-1582050041567-9cfdd330d545?q=80&w=800'
-            },
-            {
-                name: 'Szombathely: St. Martin Kirche',
-                name_hu: 'Szombathely: Szent Márton-templom',
-                coords: [47.2350, 16.6250],
-                [cite_start]text: 'Traditioneller Geburtsort des Heiligen Martin und Zentrum der Via Sancti Martini[cite: 654, 655].',
-                [cite_start]text_hu: 'Szent Márton hagyományos szülőhelye[cite: 654, 655].',
+                text: 'Themenbereich an der historischen Grenzlinie der Lafnitz, die Steiermark und das Komitat Vas trennte[cite: 288, 1531].',
+                text_hu: 'Tematikus terület a Lapincs történelmi határvonalán[cite: 288, 1531].',
                 image: 'https://images.unsplash.com/photo-1548705085-101177834f47?q=80&w=800'
-            },
-            {
-                name: 'Kőszeg: Jurisics-Burg',
-                name_hu: 'Kőszeg: Jurisics-vár',
-                coords: [47.3891, 16.5413],
-                [cite_start]text: 'Eine der besterhaltenen Festungsstädte, berühmt für die Verteidigung gegen die Osmanen 1532[cite: 605, 607].',
-                [cite_start]text_hu: 'Magyarország egyik legépebben maradt várvárosa[cite: 605, 607].',
-                image: 'https://images.unsplash.com/photo-1590059349890-449e79f22501?q=80&w=800'
             },
             {
                 name: 'Vasvár: Eisenburger Schanze',
                 name_hu: 'Vasvár: Vasvári Sánc',
                 coords: [47.0500, 16.8050],
-                [cite_start]text: '8 km langer Erdwall zum Schutz der Soldatenstraße, ein bedeutendes kora-mittelalterliches Denkmal[cite: 613, 614].',
-                [cite_start]text_hu: '8 km hosszú sánc a katonai út védelmére[cite: 613, 614].',
+                text: '8 km langer frühmittelalterlicher Erdwall zum Schutz der Soldatenstraße[cite: 681, 1924].',
+                text_hu: '8 km hosszú kora középkori sánc a katonai út védelmére[cite: 681, 1924].',
                 image: 'https://images.unsplash.com/photo-1599412227383-b7d4751c8765?q=80&w=800'
             }
+            // Hinweis: Weitere Standorte können nach dem gleichen Muster ergänzt werden.
         ];
 
         function App() {
@@ -125,22 +78,29 @@
             const [isSpeaking, setIsSpeaking] = useState(false);
             const mapRef = useRef(null);
             const polylineRef = useRef(null);
-            const speechRef = useRef(null);
 
             useEffect(() => {
-                const map = L.map('map', { zoomControl: false });
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                const map = L.map('map', { zoomControl: false }).setView(locations[0].coords, 9);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(map);
+                
                 L.control.zoom({ position: 'topright' }).addTo(map);
 
-                const coords = locations.map(l => l.coords);
-                const poly = L.polyline(coords, { color: '#8b5a2b', weight: 4, dashArray: '10, 10', smoothFactor: 2.5, opacity: 0.8 }).addTo(map);
+                const coords = locations.slice(1).map(l => l.coords);
+                const poly = L.polyline(coords, { 
+                    color: '#8b5a2b', 
+                    dashArray: '10, 10', 
+                    smoothFactor: 2.5,
+                    opacity: 0.8 
+                }).addTo(map);
+                
                 polylineRef.current = poly;
                 mapRef.current = map;
 
-                map.fitBounds(poly.getBounds(), { padding: [50, 50] });
-
                 map.on('zoomend', () => {
-                    poly.setStyle({ opacity: map.getZoom() < 13 ? 0.8 : 0 });
+                    const zoom = map.getZoom();
+                    poly.setStyle({ opacity: zoom < 13 ? 0.8 : 0 });
                 });
 
                 return () => map.remove();
@@ -149,23 +109,32 @@
             useEffect(() => {
                 if (mapRef.current) {
                     const loc = locations[currentIndex];
-                    currentIndex === 0 ? mapRef.current.fitBounds(polylineRef.current.getBounds(), { padding: [50, 50] }) : mapRef.current.flyTo(loc.coords, 15);
+                    if (currentIndex === 0) {
+                        mapRef.current.fitBounds(polylineRef.current.getBounds(), { padding: [50, 50] });
+                    } else {
+                        mapRef.current.flyTo(loc.coords, 15);
+                    }
                 }
                 window.speechSynthesis.cancel();
                 setIsSpeaking(false);
             }, [currentIndex]);
 
             const toggleAudio = () => {
-                const synth = window.speechSynthesis;
-                if (synth.speaking) { synth.cancel(); setIsSpeaking(false); }
-                else {
-                    const utterance = new SpeechSynthesisUtterance(lang === 'de' ? locations[currentIndex].text : locations[currentIndex].text_hu);
+                if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                    setIsSpeaking(false);
+                } else {
+                    const textSource = lang === 'de' ? locations[currentIndex].text : locations[currentIndex].text_hu;
+                    const cleanText = textSource.replace(/\]+\]/g, '');
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
                     utterance.lang = lang === 'de' ? 'de-DE' : 'hu-HU';
-                    const voices = synth.getVoices();
-                    const voice = voices.find(v => v.name.includes('Natural') && v.lang.startsWith(lang));
-                    if (voice) utterance.voice = voice;
+                    
+                    const voices = window.speechSynthesis.getVoices();
+                    const pref = voices.find(v => v.name.includes('Natural') && v.lang.startsWith(lang));
+                    if (pref) utterance.voice = pref;
+                    
                     utterance.onend = () => setIsSpeaking(false);
-                    synth.speak(utterance);
+                    window.speechSynthesis.speak(utterance);
                     setIsSpeaking(true);
                 }
             };
@@ -182,28 +151,37 @@
             return (
                 <div className="relative w-full h-screen overflow-hidden bg-[#2c1e16]">
                     <div id="map"></div>
-                    <div className="absolute top-4 left-4 z-[1000] flex parchment rounded-sm shadow-lg overflow-hidden">
+
+                    {/* Language Switch */}
+                    <div className="absolute top-4 left-4 z-[1000] flex bg-[#fdf6e3] border-2 border-[#8b5a2b] rounded-sm shadow-lg overflow-hidden">
                         <button onClick={() => setLang('de')} className={`px-4 py-2 font-bold ${lang === 'de' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>DE</button>
                         <button onClick={() => setLang('hu')} className={`px-4 py-2 font-bold ${lang === 'hu' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>HU</button>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 md:top-0 md:left-4 md:w-96 z-[1000] p-4 pointer-events-none md:h-full flex flex-col justify-center">
-                        <div className="parchment rounded-sm overflow-hidden flex flex-col pointer-events-auto shadow-2xl h-fit max-h-[85vh]">
-                            <img src={loc.image} className="h-40 md:h-56 w-full object-cover sepia-[.3]" />
+
+                    {/* Info Card */}
+                    <div className="absolute bottom-0 left-0 right-0 md:top-0 md:left-4 md:w-[420px] z-[1000] p-4 pointer-events-none md:h-full flex flex-col justify-end md:justify-start">
+                        <div className="bg-[#fdf6e3] border-4 border-double border-[#8b5a2b] rounded-sm overflow-hidden flex flex-col pointer-events-auto shadow-2xl h-fit max-h-[75vh] md:max-h-[90vh]">
+                            <img src={loc.image} className="h-40 md:h-56 object-cover sepia-effect" />
                             <div className="p-6 overflow-y-auto">
                                 <div className="flex justify-between items-start mb-2">
-                                    <span className="text-xs uppercase tracking-widest text-[#8b5a2b] font-bold">{lang === 'de' ? 'Station' : 'Állomás'} {currentIndex} / {locations.length - 1}</span>
-                                    <button onClick={toggleAudio} className="text-[#8b5a2b]">{isSpeaking ? '⏹' : '🔊'}</button>
+                                    <span className="text-xs uppercase tracking-widest text-[#8b5a2b] font-bold">
+                                        {lang === 'de' ? 'Station' : 'Állomás'} {currentIndex}
+                                    </span>
+                                    <button onClick={toggleAudio} className="text-[#8b5a2b] text-xl">
+                                        {isSpeaking ? '⏹' : '🔊'}
+                                    </button>
                                 </div>
                                 <h2 className="text-2xl font-display text-[#8b5a2b] mb-4">{lang === 'de' ? loc.name : loc.name_hu}</h2>
-                                <p className={`text-[#3e2723] font-serif leading-relaxed ${!isExpanded ? 'line-clamp-4' : ''}`}>
+                                <p className={`text-[#3e2723] leading-relaxed font-serif text-lg ${!isExpanded ? 'line-clamp-4' : ''}`}>
                                     {lang === 'de' ? loc.text : loc.text_hu}
                                 </p>
-                                { (lang === 'de' ? loc.text : loc.text_hu).length > 150 && (
-                                    <button onClick={() => setIsExpanded(!isExpanded)} className="text-[#8b5a2b] font-bold mt-2 underline text-sm">
+                                {loc.text.length > 150 && (
+                                    <button onClick={() => setIsExpanded(!isExpanded)} className="text-[#8b5a2b] font-bold mt-2 underline">
                                         {isExpanded ? (lang === 'de' ? 'Weniger' : 'Kevesebb') : (lang === 'de' ? 'Mehr lesen...' : 'Bővebben...')}
                                     </button>
                                 )}
                             </div>
+
                             <div className="p-4 bg-[#f4ebd0] border-t-2 border-[#8b5a2b] flex items-center justify-between">
                                 <button onClick={() => setCurrentIndex(prev => (prev - 1 + locations.length) % locations.length)} className="p-2 border-2 border-[#8b5a2b] text-[#8b5a2b]">◀</button>
                                 <div className="flex gap-2">
