@@ -14,11 +14,30 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=MedievalSharp&display=swap');
+        
+        body { margin: 0; padding: 0; background: #2c1e16; overflow: hidden; }
         .font-serif { font-family: 'Inter', serif; }
         .font-display { font-family: 'MedievalSharp', cursive; }
-        #map { height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; z-index: 0; }
-        .line-clamp-4 { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        #map { 
+            height: 100vh; 
+            width: 100vw; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            z-index: 0; 
+            filter: sepia(0.4) contrast(0.9) brightness(1.1); 
+        }
+
+        /* Scrollbar-Design im Pergament-Stil */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdf6e3; }
+        ::-webkit-scrollbar-thumb { background: #8b5a2b; border-radius: 4px; }
+
         .sepia-effect { filter: sepia(0.3) contrast(1.1); }
+        
+        /* Animation für das Panel */
+        .panel-transition { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body>
@@ -27,169 +46,270 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
+        // SVG Icons als Komponenten (Ersatz für lucide-react in HTML)
+        const IconMapPin = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>;
+        const IconVolume = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>;
+        const IconSquare = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>;
+        const IconGlobe = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>;
+        const IconMaximize = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>;
+
         const locations = [
             {
-                name: 'Pannonische Kulturroute - Alltag im Mittelalter',
-                name_hu: 'Pannon Kulturút - Mindennapok a középkorban',
-                coords: [47.22, 16.35],
-                text: 'Willkommen auf einer Zeitreise durch das Südburgenland und das Komitat Vas. Entdecken Sie das gemeinsame Erbe einer Region, die mittelalterlichen Alltag – von Arbeit und Handel über Glaube bis hin zur Verteidigung – lebendig erlebbar macht[cite: 1292, 1293].',
-                text_hu: 'Üdvözöljük egy időutazáson Dél-Burgenlandban és Vas vármegyében. Fedezze fel egy olyan régió közös örökségét, amely a középkori mindennapokat élénken mutatja be[cite: 1292, 1293].',
-                image: 'https://images.unsplash.com/photo-1599412227383-b7d4751c8765?q=80&w=800'
+                name: 'Pannonische Kulturroute',
+                name_hu: 'Pannon Kulturút',
+                coords: [47.1500, 16.4500],
+                text: 'Willkommen auf der Pannonischen Kulturroute! Diese historische Reise verbindet das Südburgenland mit dem ungarischen Komitat Vas. Entdecken Sie mittelalterliche Ringwallanlagen, historische Zollstationen und alte Festungen, die von einer gemeinsamen Geschichte erzählen.',
+                text_hu: 'Üdvözöljük a Pannon Kulturúton! Ez a történelmi utazás a Dél-Burgenlandot és a magyarországi Vas megyét köti össze. Fedezze fel a középkori sáncrendszereket és a történelmi vámállomásokat.',
+                images: ['images/intro.jpg']
             },
             {
                 name: 'Litzelsdorf: Ringwallanlage',
                 name_hu: 'Litzelsdorf: Sáncrendszer',
                 coords: [47.2033, 16.1325],
-                text: 'Rekonstruierte mittelalterliche Ringwallanlage als multifunktionale Bühne. Macht die historische Verteidigungsarchitektur erlebbar[cite: 276, 1519].',
-                text_hu: 'Rekonstruált középkori sáncrendszer, amely többfunkciós színpadként szolgál[cite: 276, 1519].',
-                image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=800'
+                text: 'Rekonstruierte mittelalterliche Ringwallanlage als multifunktionale Bühne. Macht die historische Verteidigungsarchitektur erlebbar.',
+                text_hu: 'Rekonstruált középkori sáncrendszer, amely többfunkciós színpadként szolgál.',
+                images: ['images/litz_wall.jpg']
             },
             {
                 name: 'Litzelsdorf: Aussichtsturm',
                 name_hu: 'Litzelsdorf: Kilátó',
                 coords: [47.2050, 16.1350],
-                text: 'Neuer Aussichtsturm im Naturraum zur Inszenierung der historischen Identität der Gemeinde[cite: 276, 1519].',
-                text_hu: 'Új kilátó a természetben a közösség történelmi identitásának bemutatására[cite: 276, 1519].',
-                image: 'https://images.unsplash.com/photo-1547407139-3c921a66005c?q=80&w=800'
+                text: 'Neuer Aussichtsturm im Naturraum zur Inszenierung der historischen Identität.',
+                text_hu: 'Új kilátó a természetben a történelmi identitás bemutatására.',
+                images: ['images/litz_turm.jpg']
             },
             {
-                name: 'Wolfau: Erlebnisareal Zoll und Maut',
-                name_hu: 'Wolfau: Vám és illeték élményterület',
+                name: 'Litzelsdorf: Bogenschützenplatz',
+                name_hu: 'Litzelsdorf: Íjászpálya',
+                coords: [47.2020, 16.1310],
+                text: 'Aktivierende Erlebnisstation als Hommage an die Tradition der Grenzwächter.',
+                text_hu: 'Aktív élményállomás a határőrök hagyománya előtt tisztelegve.',
+                images: ['images/litz_bogen.jpg']
+            },
+            {
+                name: 'Litzelsdorf: Hügelgräber',
+                name_hu: 'Litzelsdorf: Halomsírok',
+                coords: [47.2150, 16.1200],
+                text: '36 Grabhügel aus der Bronzezeit bis zur römischen Kaiserzeit sowie der Fundort des Grabsteins der Julia Vera.',
+                text_hu: '36 halomsír a bronzkortól a római császárkorig.',
+                images: ['images/litz_grab.jpg']
+            },
+            {
+                name: 'Kemeten: Hofweingarten',
+                name_hu: 'Kemeten: Udvari szőlőskert',
+                coords: [47.2500, 16.1600],
+                text: 'Reaktivierung des mittelalterlichen Weingartens als landschaftsprägendes Kulturgut.',
+                text_hu: 'A középkori szőlőskert reaktiválása tájformáló kulturális értékként.',
+                images: ['images/kem_wein.jpg']
+            },
+            {
+                name: 'Kemeten: Weinschank im Stadel',
+                name_hu: 'Kemeten: Borozó a csűrben',
+                coords: [47.2475, 16.1511],
+                text: 'Umbau des Stadels im Dorfzentrum (Böhmhaus) zu einer Weinschank als zentraler Ankerpunkt.',
+                text_hu: 'A falu központjában található csűr (Böhm-ház) borozóvá alakítása.',
+                images: ['images/kem_stadel.jpg']
+            },
+            {
+                name: 'Kemeten: Meierhof',
+                name_hu: 'Kemeten: Major',
+                coords: [47.2450, 16.1550],
+                text: 'Ehemaliger Meierhof der Familie Batthyány und Skulpturenweg des Holzschnitzers Martin Bauer.',
+                text_hu: 'A Batthyány család egykori majorja.',
+                images: ['images/kem_meier.jpg']
+            },
+            {
+                name: 'Wolfau: Zoll und Maut',
+                name_hu: 'Wolfau: Vám és illeték',
                 coords: [47.2580, 16.0950],
-                text: 'Themenbereich an der historischen Grenzlinie der Lafnitz, die Steiermark und das Komitat Vas trennte[cite: 288, 1531].',
-                text_hu: 'Tematikus terület a Lapincs történelmi határvonalán[cite: 288, 1531].',
-                image: 'https://images.unsplash.com/photo-1548705085-101177834f47?q=80&w=800'
+                text: 'Themenbereich "Mittelalter, Zoll und Maut" an der historischen Grenzlinie der Lafnitz.',
+                text_hu: '"Középkori, vám és illeték" tematikus terület a Lapincs határán.',
+                images: ['images/wolf_zoll.jpg']
+            },
+            {
+                name: 'Wolfau: Tschartaken',
+                name_hu: 'Wolfau: Csárdák',
+                coords: [47.2600, 16.1050],
+                text: 'Nachbauten ungarischer Grenzwachtürme (Tschartaken) und generationsübergreifender Spielpark.',
+                text_hu: 'Magyar határőrtornyok utánzatai.',
+                images: ['images/wolf_tschartake.jpg']
+            },
+            {
+                name: 'Szombathely: Ruinengarten',
+                name_hu: 'Szombathely: Romkert',
+                coords: [47.2307, 16.6219],
+                text: 'Überreste der mittelalterlichen Burg und des Kaiserpalastes auf römischen Fundamenten.',
+                text_hu: 'A középkori vár és a császári palota maradványai római alapokon.',
+                images: ['images/szom_ruin.jpg']
+            },
+            {
+                name: 'Szombathely: St. Martin Kirche',
+                name_hu: 'Szombathely: Szent Márton-templom',
+                coords: [47.2350, 16.6250],
+                text: 'Traditioneller Geburtsort des Heiligen Martin und Knotenpunkt der Via Sancti Martini.',
+                text_hu: 'Szent Márton hagyományos szülőhelye.',
+                images: ['images/szom_martin.jpg']
+            },
+            {
+                name: 'Kőszeg: Jurisics-Burg',
+                name_hu: 'Kőszeg: Jurisics-vár',
+                coords: [47.3891, 16.5413],
+                text: 'Mittelalterliche Festung, berühmt für die Verteidigung gegen die Osmanen im Jahr 1532.',
+                text_hu: 'Középkori erőd, híres az 1532-es védekezésről.',
+                images: ['images/kosz_burg.jpg']
+            },
+            {
+                name: 'Kőszeg: Helden-Tor',
+                name_hu: 'Kőszeg: Hősök kapuja',
+                coords: [47.3880, 16.5420],
+                text: 'Ikonisches Wahrzeichen und Teil der mittelalterlichen Stadtbefestigung.',
+                text_hu: 'Ikonikus jelkép és a középkori erődítmény része.',
+                images: ['images/kosz_tor.jpg']
             },
             {
                 name: 'Vasvár: Eisenburger Schanze',
                 name_hu: 'Vasvár: Vasvári Sánc',
                 coords: [47.0500, 16.8050],
-                text: '8 km langer frühmittelalterlicher Erdwall zum Schutz der Soldatenstraße[cite: 681, 1924].',
-                text_hu: '8 km hosszú kora középkori sánc a katonai út védelmére[cite: 681, 1924].',
-                image: 'https://images.unsplash.com/photo-1599412227383-b7d4751c8765?q=80&w=800'
+                text: '8 km langer Erdwall zum Schutz der Soldatenstraße, ein bedeutendes Denkmal.',
+                text_hu: '8 km hosszú sánc a katonai út védelmére.',
+                images: ['images/vas_schanze.jpg']
+            },
+            {
+                name: 'Vasvár: Dominikanerkloster',
+                name_hu: 'Vasvár: Dominikánus kolostor',
+                coords: [47.0520, 16.8000],
+                text: 'Beherbergt das Stadtmuseum und zeigt bedeutende Reste mittelalterlicher Bausubstanz.',
+                text_hu: 'Helyet ad a városi múzeumnak.',
+                images: ['images/vas_kloster.jpg']
             }
-            // Hinweis: Weitere Standorte können nach dem gleichen Muster ergänzt werden.
         ];
 
-        function App() {
-            const [currentIndex, setCurrentIndex] = useState(0);
-            const [lang, setLang] = useState('de');
-            const [isExpanded, setIsExpanded] = useState(false);
-            const [isSpeaking, setIsSpeaking] = useState(false);
-            const mapRef = useRef(null);
-            const polylineRef = useRef(null);
+        const medievalIcon = L.divIcon({
+            className: '',
+            html: `<div style="filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.5)); transform: translateY(-4px);">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="#8b5a2b" stroke="#fdf6e3" stroke-width="1.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <circle cx="12" cy="10" r="3" fill="#fdf6e3" stroke="none"/>
+                    </svg>
+                   </div>`,
+            iconSize: [36, 36],
+            iconAnchor: [18, 36]
+        });
 
+        function App() {
+            const mapRef = useRef(null);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [language, setLanguage] = useState('de');
+            const [isPanelExpanded, setIsPanelExpanded] = useState(false);
+            const [isSpeaking, setIsSpeaking] = useState(false);
+            const speechRef = useRef(null);
+
+            const loc = locations[currentIndex];
+            const currentName = language === 'de' ? loc.name : loc.name_hu;
+            const currentText = language === 'de' ? loc.text : loc.text_hu;
+
+            // Initialisierung Karte
             useEffect(() => {
                 const map = L.map('map', { zoomControl: false }).setView(locations[0].coords, 9);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap'
-                }).addTo(map);
-                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 L.control.zoom({ position: 'topright' }).addTo(map);
 
-                const coords = locations.slice(1).map(l => l.coords);
-                const poly = L.polyline(coords, { 
-                    color: '#8b5a2b', 
-                    dashArray: '10, 10', 
-                    smoothFactor: 2.5,
-                    opacity: 0.8 
-                }).addTo(map);
-                
-                polylineRef.current = poly;
-                mapRef.current = map;
+                const routeCoords = locations.map(l => l.coords);
+                L.polyline(routeCoords, { color: '#8b5a2b', dashArray: '10, 10', weight: 3, opacity: 0.6 }).addTo(map);
 
-                map.on('zoomend', () => {
-                    const zoom = map.getZoom();
-                    poly.setStyle({ opacity: zoom < 13 ? 0.8 : 0 });
+                locations.forEach((l, i) => {
+                    L.marker(l.coords, { icon: medievalIcon }).addTo(map).on('click', () => setCurrentIndex(i));
                 });
 
+                mapRef.current = map;
                 return () => map.remove();
             }, []);
 
+            // Fly-To Logik
             useEffect(() => {
                 if (mapRef.current) {
-                    const loc = locations[currentIndex];
-                    if (currentIndex === 0) {
-                        mapRef.current.fitBounds(polylineRef.current.getBounds(), { padding: [50, 50] });
-                    } else {
-                        mapRef.current.flyTo(loc.coords, 15);
-                    }
+                    const isMobile = window.innerWidth < 768;
+                    const offset = isMobile ? -0.005 : 0;
+                    mapRef.current.flyTo([loc.coords[0] + offset, loc.coords[1]], 14);
                 }
                 window.speechSynthesis.cancel();
                 setIsSpeaking(false);
+                setIsPanelExpanded(false);
             }, [currentIndex]);
 
-            const toggleAudio = () => {
+            const toggleSpeech = () => {
                 if (isSpeaking) {
                     window.speechSynthesis.cancel();
                     setIsSpeaking(false);
                 } else {
-                    const textSource = lang === 'de' ? locations[currentIndex].text : locations[currentIndex].text_hu;
-                    const cleanText = textSource.replace(/\]+\]/g, '');
-                    const utterance = new SpeechSynthesisUtterance(cleanText);
-                    utterance.lang = lang === 'de' ? 'de-DE' : 'hu-HU';
-                    
-                    const voices = window.speechSynthesis.getVoices();
-                    const pref = voices.find(v => v.name.includes('Natural') && v.lang.startsWith(lang));
-                    if (pref) utterance.voice = pref;
-                    
-                    utterance.onend = () => setIsSpeaking(false);
-                    window.speechSynthesis.speak(utterance);
+                    const cleanText = currentText.replace(/\/g, '');
+                    const utt = new SpeechSynthesisUtterance(cleanText);
+                    utt.lang = language === 'de' ? 'de-DE' : 'hu-HU';
+                    utt.onend = () => setIsSpeaking(false);
+                    window.speechSynthesis.speak(utt);
                     setIsSpeaking(true);
                 }
             };
 
-            const getVisibleDots = () => {
-                let start = Math.max(0, currentIndex - 2);
-                let end = Math.min(locations.length, start + 6);
-                if (end === locations.length) start = Math.max(0, end - 6);
-                return Array.from({length: end - start}, (_, i) => start + i);
+            const openFullscreen = () => {
+                window.open(window.location.href, '_blank');
             };
 
-            const loc = locations[currentIndex];
-
             return (
-                <div className="relative w-full h-screen overflow-hidden bg-[#2c1e16]">
+                <div className="relative w-full h-screen overflow-hidden font-serif">
                     <div id="map"></div>
 
-                    {/* Language Switch */}
-                    <div className="absolute top-4 left-4 z-[1000] flex bg-[#fdf6e3] border-2 border-[#8b5a2b] rounded-sm shadow-lg overflow-hidden">
-                        <button onClick={() => setLang('de')} className={`px-4 py-2 font-bold ${lang === 'de' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>DE</button>
-                        <button onClick={() => setLang('hu')} className={`px-4 py-2 font-bold ${lang === 'hu' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>HU</button>
+                    {/* Steuerung Oben Rechts */}
+                    <div className="absolute top-4 right-4 z-[1010] flex flex-col gap-2">
+                        <div className="flex bg-[#fdf6e3] border-2 border-[#8b5a2b] rounded-sm shadow-lg overflow-hidden">
+                            <button onClick={() => setLanguage('de')} className={`px-3 py-1.5 font-bold ${language === 'de' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>DE</button>
+                            <button onClick={() => setLanguage('hu')} className={`px-3 py-1.5 font-bold ${language === 'hu' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>HU</button>
+                        </div>
+                        <button onClick={openFullscreen} className="bg-[#fdf6e3] border-2 border-[#8b5a2b] p-2 text-[#8b5a2b] shadow-lg rounded-sm hover:bg-[#8b5a2b] hover:text-white transition-colors">
+                            <IconMaximize />
+                        </button>
                     </div>
 
-                    {/* Info Card */}
-                    <div className="absolute bottom-0 left-0 right-0 md:top-0 md:left-4 md:w-[420px] z-[1000] p-4 pointer-events-none md:h-full flex flex-col justify-end md:justify-start">
-                        <div className="bg-[#fdf6e3] border-4 border-double border-[#8b5a2b] rounded-sm overflow-hidden flex flex-col pointer-events-auto shadow-2xl h-fit max-h-[75vh] md:max-h-[90vh]">
-                            <img src={loc.image} className="h-40 md:h-56 object-cover sepia-effect" />
-                            <div className="p-6 overflow-y-auto">
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className="text-xs uppercase tracking-widest text-[#8b5a2b] font-bold">
-                                        {lang === 'de' ? 'Station' : 'Állomás'} {currentIndex}
-                                    </span>
-                                    <button onClick={toggleAudio} className="text-[#8b5a2b] text-xl">
-                                        {isSpeaking ? '⏹' : '🔊'}
-                                    </button>
-                                </div>
-                                <h2 className="text-2xl font-display text-[#8b5a2b] mb-4">{lang === 'de' ? loc.name : loc.name_hu}</h2>
-                                <p className={`text-[#3e2723] leading-relaxed font-serif text-lg ${!isExpanded ? 'line-clamp-4' : ''}`}>
-                                    {lang === 'de' ? loc.text : loc.text_hu}
-                                </p>
-                                {loc.text.length > 150 && (
-                                    <button onClick={() => setIsExpanded(!isExpanded)} className="text-[#8b5a2b] font-bold mt-2 underline">
-                                        {isExpanded ? (lang === 'de' ? 'Weniger' : 'Kevesebb') : (lang === 'de' ? 'Mehr lesen...' : 'Bővebben...')}
-                                    </button>
-                                )}
+                    {/* Info Panel */}
+                    <div className="absolute bottom-0 left-0 right-0 z-[1000] p-2 md:top-0 md:left-4 md:w-[400px] md:h-full pointer-events-none flex flex-col justify-end md:justify-start">
+                        <div className={`bg-[#fdf6e3] border-4 border-double border-[#8b5a2b] rounded-t-xl md:rounded-sm shadow-2xl overflow-hidden pointer-events-auto panel-transition ${isPanelExpanded ? 'h-[75vh]' : 'h-[40vh] md:h-auto md:max-h-[90vh]'}`}>
+                            
+                            {/* Drag Handle Mobile */}
+                            <div className="md:hidden w-full flex justify-center py-2 cursor-pointer bg-[#f4ebd0]" onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
+                                <div className="w-12 h-1 bg-[#8b5a2b] opacity-30 rounded-full"></div>
                             </div>
 
+                            <div className="relative h-32 md:h-56 overflow-hidden border-b-2 border-[#8b5a2b]">
+                                <img src={loc.images[0]} className="w-full h-full object-cover sepia-effect" />
+                                <div className="absolute bottom-2 left-3 text-[#fdf6e3] drop-shadow-lg font-display text-xl">
+                                    {currentIndex + 1}. {currentName}
+                                </div>
+                            </div>
+
+                            <div className="p-4 md:p-6 overflow-y-auto flex-grow bg-[#fdf6e3]">
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className="text-[10px] uppercase tracking-widest text-[#8b5a2b] font-bold">
+                                        Station {currentIndex + 1}
+                                    </span>
+                                    <button onClick={toggleSpeech} className="p-2 border border-[#8b5a2b] rounded-full text-[#8b5a2b] hover:bg-[#8b5a2b] hover:text-white">
+                                        {isSpeaking ? <IconSquare /> : <IconVolume />}
+                                    </button>
+                                </div>
+                                <h2 className="text-2xl font-display text-[#8b5a2b] mb-4 leading-tight">{currentName}</h2>
+                                <p className="text-[#3e2723] leading-relaxed text-base md:text-lg first-letter:text-4xl first-letter:font-display first-letter:float-left first-letter:mr-2">
+                                    {currentText}
+                                </p>
+                            </div>
+
+                            {/* Navigation */}
                             <div className="p-4 bg-[#f4ebd0] border-t-2 border-[#8b5a2b] flex items-center justify-between">
-                                <button onClick={() => setCurrentIndex(prev => (prev - 1 + locations.length) % locations.length)} className="p-2 border-2 border-[#8b5a2b] text-[#8b5a2b]">◀</button>
-                                <div className="flex gap-2">
-                                    {getVisibleDots().map(idx => (
-                                        <div key={idx} onClick={() => setCurrentIndex(idx)} className={`w-3 h-3 rotate-45 border border-[#8b5a2b] cursor-pointer transition-all ${idx === currentIndex ? 'bg-[#8b5a2b] scale-125' : 'bg-white opacity-40'}`}></div>
+                                <button onClick={() => setCurrentIndex(prev => (prev - 1 + locations.length) % locations.length)} className="w-10 h-10 border-2 border-[#8b5a2b] text-[#8b5a2b] hover:bg-[#8b5a2b] hover:text-white transition-colors">◀</button>
+                                <div className="flex gap-1.5">
+                                    {locations.slice(0, 6).map((_, i) => (
+                                        <div key={i} onClick={() => setCurrentIndex(i)} className={`w-2 h-2 rotate-45 border border-[#8b5a2b] cursor-pointer ${i === currentIndex ? 'bg-[#8b5a2b] scale-125' : 'bg-white opacity-40'}`}></div>
                                     ))}
                                 </div>
-                                <button onClick={() => setCurrentIndex(prev => (prev + 1) % locations.length)} className="p-2 border-2 border-[#8b5a2b] text-[#8b5a2b]">▶</button>
+                                <button onClick={() => setCurrentIndex(prev => (prev + 1) % locations.length)} className="w-10 h-10 border-2 border-[#8b5a2b] text-[#8b5a2b] hover:bg-[#8b5a2b] hover:text-white transition-colors">▶</button>
                             </div>
                         </div>
                     </div>
