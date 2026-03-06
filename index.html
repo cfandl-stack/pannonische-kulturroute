@@ -13,20 +13,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=MedievalSharp&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
         body { margin: 0; padding: 0; background: #2c1e16; overflow: hidden; }
-        .font-serif { font-family: 'Inter', serif; }
-        .font-display { font-family: 'MedievalSharp', cursive; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; font-size: 1.05em; }
+        .font-display { font-family: 'Cinzel Decorative', serif; }
         
-        #map { 
-            height: 100vh; 
-            width: 100vw; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            z-index: 0; 
-            filter: sepia(0.4) contrast(0.9) brightness(1.1); 
+        #map {
+            height: 100vh;
+            width: 100vw;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .leaflet-tile-pane {
+            filter: sepia(1) contrast(0.85) brightness(1.05) saturate(0.8);
         }
 
         /* Scrollbar-Design im Pergament-Stil */
@@ -35,6 +38,12 @@
         ::-webkit-scrollbar-thumb { background: #8b5a2b; border-radius: 4px; }
 
         .sepia-effect { filter: sepia(0.3) contrast(1.1); }
+
+        /* Leaflet Zoom Position */
+        .leaflet-top.leaflet-right .leaflet-control-zoom {
+            margin-top: 68px;
+            margin-right: 16px;
+        }
         
         /* Animation für das Panel */
         .panel-transition { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -60,7 +69,7 @@
                 coords: [47.1500, 16.4500],
                 text: 'Willkommen auf der Pannonischen Kulturroute! Diese historische Reise verbindet das Südburgenland mit dem ungarischen Komitat Vas. Entdecken Sie mittelalterliche Ringwallanlagen, historische Zollstationen und alte Festungen, die von einer gemeinsamen Geschichte erzählen.',
                 text_hu: 'Üdvözöljük a Pannon Kulturúton! Ez a történelmi utazás a Dél-Burgenlandot és a magyarországi Vas megyét köti össze. Fedezze fel a középkori sáncrendszereket és a történelmi vámállomásokat.',
-                images: ['images/intro.jpg']
+                images: ['https://picsum.photos/seed/pannon/800/400']
             },
             {
                 name: 'Litzelsdorf: Ringwallanlage',
@@ -68,7 +77,7 @@
                 coords: [47.2033, 16.1325],
                 text: 'Rekonstruierte mittelalterliche Ringwallanlage als multifunktionale Bühne. Macht die historische Verteidigungsarchitektur erlebbar.',
                 text_hu: 'Rekonstruált középkori sáncrendszer, amely többfunkciós színpadként szolgál.',
-                images: ['images/litz_wall.jpg']
+                images: ['https://picsum.photos/seed/ringwall/800/400']
             },
             {
                 name: 'Litzelsdorf: Aussichtsturm',
@@ -76,7 +85,7 @@
                 coords: [47.2050, 16.1350],
                 text: 'Neuer Aussichtsturm im Naturraum zur Inszenierung der historischen Identität.',
                 text_hu: 'Új kilátó a természetben a történelmi identitás bemutatására.',
-                images: ['images/litz_turm.jpg']
+                images: ['https://picsum.photos/seed/turm42/800/400']
             },
             {
                 name: 'Litzelsdorf: Bogenschützenplatz',
@@ -84,7 +93,7 @@
                 coords: [47.2020, 16.1310],
                 text: 'Aktivierende Erlebnisstation als Hommage an die Tradition der Grenzwächter.',
                 text_hu: 'Aktív élményállomás a határőrök hagyománya előtt tisztelegve.',
-                images: ['images/litz_bogen.jpg']
+                images: ['https://picsum.photos/seed/bogen7/800/400']
             },
             {
                 name: 'Litzelsdorf: Hügelgräber',
@@ -92,7 +101,7 @@
                 coords: [47.2150, 16.1200],
                 text: '36 Grabhügel aus der Bronzezeit bis zur römischen Kaiserzeit sowie der Fundort des Grabsteins der Julia Vera.',
                 text_hu: '36 halomsír a bronzkortól a római császárkorig.',
-                images: ['images/litz_grab.jpg']
+                images: ['https://picsum.photos/seed/huegel9/800/400']
             },
             {
                 name: 'Kemeten: Hofweingarten',
@@ -100,7 +109,7 @@
                 coords: [47.2500, 16.1600],
                 text: 'Reaktivierung des mittelalterlichen Weingartens als landschaftsprägendes Kulturgut.',
                 text_hu: 'A középkori szőlőskert reaktiválása tájformáló kulturális értékként.',
-                images: ['images/kem_wein.jpg']
+                images: ['https://picsum.photos/seed/wein15/800/400']
             },
             {
                 name: 'Kemeten: Weinschank im Stadel',
@@ -108,7 +117,7 @@
                 coords: [47.2475, 16.1511],
                 text: 'Umbau des Stadels im Dorfzentrum (Böhmhaus) zu einer Weinschank als zentraler Ankerpunkt.',
                 text_hu: 'A falu központjában található csűr (Böhm-ház) borozóvá alakítása.',
-                images: ['images/kem_stadel.jpg']
+                images: ['https://picsum.photos/seed/stadel3/800/400']
             },
             {
                 name: 'Kemeten: Meierhof',
@@ -116,7 +125,7 @@
                 coords: [47.2450, 16.1550],
                 text: 'Ehemaliger Meierhof der Familie Batthyány und Skulpturenweg des Holzschnitzers Martin Bauer.',
                 text_hu: 'A Batthyány család egykori majorja.',
-                images: ['images/kem_meier.jpg']
+                images: ['https://picsum.photos/seed/meier8/800/400']
             },
             {
                 name: 'Wolfau: Zoll und Maut',
@@ -124,7 +133,7 @@
                 coords: [47.2580, 16.0950],
                 text: 'Themenbereich "Mittelalter, Zoll und Maut" an der historischen Grenzlinie der Lafnitz.',
                 text_hu: '"Középkori, vám és illeték" tematikus terület a Lapincs határán.',
-                images: ['images/wolf_zoll.jpg']
+                images: ['https://picsum.photos/seed/zoll21/800/400']
             },
             {
                 name: 'Wolfau: Tschartaken',
@@ -132,7 +141,7 @@
                 coords: [47.2600, 16.1050],
                 text: 'Nachbauten ungarischer Grenzwachtürme (Tschartaken) und generationsübergreifender Spielpark.',
                 text_hu: 'Magyar határőrtornyok utánzatai.',
-                images: ['images/wolf_tschartake.jpg']
+                images: ['https://picsum.photos/seed/tscharta/800/400']
             },
             {
                 name: 'Szombathely: Ruinengarten',
@@ -140,7 +149,7 @@
                 coords: [47.2307, 16.6219],
                 text: 'Überreste der mittelalterlichen Burg und des Kaiserpalastes auf römischen Fundamenten.',
                 text_hu: 'A középkori vár és a császári palota maradványai római alapokon.',
-                images: ['images/szom_ruin.jpg']
+                images: ['https://picsum.photos/seed/ruine5/800/400']
             },
             {
                 name: 'Szombathely: St. Martin Kirche',
@@ -148,7 +157,7 @@
                 coords: [47.2350, 16.6250],
                 text: 'Traditioneller Geburtsort des Heiligen Martin und Knotenpunkt der Via Sancti Martini.',
                 text_hu: 'Szent Márton hagyományos szülőhelye.',
-                images: ['images/szom_martin.jpg']
+                images: ['https://picsum.photos/seed/martin6/800/400']
             },
             {
                 name: 'Kőszeg: Jurisics-Burg',
@@ -156,7 +165,7 @@
                 coords: [47.3891, 16.5413],
                 text: 'Mittelalterliche Festung, berühmt für die Verteidigung gegen die Osmanen im Jahr 1532.',
                 text_hu: 'Középkori erőd, híres az 1532-es védekezésről.',
-                images: ['images/kosz_burg.jpg']
+                images: ['https://picsum.photos/seed/burg32/800/400']
             },
             {
                 name: 'Kőszeg: Helden-Tor',
@@ -164,7 +173,7 @@
                 coords: [47.3880, 16.5420],
                 text: 'Ikonisches Wahrzeichen und Teil der mittelalterlichen Stadtbefestigung.',
                 text_hu: 'Ikonikus jelkép és a középkori erődítmény része.',
-                images: ['images/kosz_tor.jpg']
+                images: ['https://picsum.photos/seed/tor14/800/400']
             },
             {
                 name: 'Vasvár: Eisenburger Schanze',
@@ -172,7 +181,7 @@
                 coords: [47.0500, 16.8050],
                 text: '8 km langer Erdwall zum Schutz der Soldatenstraße, ein bedeutendes Denkmal.',
                 text_hu: '8 km hosszú sánc a katonai út védelmére.',
-                images: ['images/vas_schanze.jpg']
+                images: ['https://picsum.photos/seed/schanz/800/400']
             },
             {
                 name: 'Vasvár: Dominikanerkloster',
@@ -180,7 +189,7 @@
                 coords: [47.0520, 16.8000],
                 text: 'Beherbergt das Stadtmuseum und zeigt bedeutende Reste mittelalterlicher Bausubstanz.',
                 text_hu: 'Helyet ad a városi múzeumnak.',
-                images: ['images/vas_kloster.jpg']
+                images: ['https://picsum.photos/seed/kloster/800/400']
             }
         ];
 
@@ -198,15 +207,17 @@
 
         function App() {
             const mapRef = useRef(null);
-            const [currentIndex, setCurrentIndex] = useState(0);
+            const [showIntro, setShowIntro] = useState(true);
+            const [currentIndex, setCurrentIndex] = useState(1);
             const [language, setLanguage] = useState('de');
-            const [isPanelExpanded, setIsPanelExpanded] = useState(false);
             const [isSpeaking, setIsSpeaking] = useState(false);
             const speechRef = useRef(null);
 
+            const introLoc = locations[0];
             const loc = locations[currentIndex];
             const currentName = language === 'de' ? loc.name : loc.name_hu;
             const currentText = language === 'de' ? loc.text : loc.text_hu;
+            const introText = language === 'de' ? introLoc.text : introLoc.text_hu;
 
             // Initialisierung Karte
             useEffect(() => {
@@ -228,14 +239,17 @@
             // Fly-To Logik
             useEffect(() => {
                 if (mapRef.current) {
-                    const isMobile = window.innerWidth < 768;
-                    const offset = isMobile ? -0.005 : 0;
-                    mapRef.current.flyTo([loc.coords[0] + offset, loc.coords[1]], 14);
+                    if (showIntro) {
+                        mapRef.current.flyTo(locations[0].coords, 9);
+                    } else {
+                        const isMobile = window.innerWidth < 768;
+                        const offset = isMobile ? -0.005 : 0;
+                        mapRef.current.flyTo([loc.coords[0] + offset, loc.coords[1]], 14);
+                    }
                 }
                 window.speechSynthesis.cancel();
                 setIsSpeaking(false);
-                setIsPanelExpanded(false);
-            }, [currentIndex]);
+            }, [currentIndex, showIntro]);
 
             const toggleSpeech = () => {
                 if (isSpeaking) {
@@ -259,60 +273,135 @@
                 <div className="relative w-full h-screen overflow-hidden font-serif">
                     <div id="map"></div>
 
-                    {/* Steuerung Oben Rechts */}
-                    <div className="absolute top-4 right-4 z-[1010] flex flex-col gap-2">
-                        <div className="flex bg-[#fdf6e3] border-2 border-[#8b5a2b] rounded-sm shadow-lg overflow-hidden">
-                            <button onClick={() => setLanguage('de')} className={`px-3 py-1.5 font-bold ${language === 'de' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>DE</button>
-                            <button onClick={() => setLanguage('hu')} className={`px-3 py-1.5 font-bold ${language === 'hu' ? 'bg-[#8b5a2b] text-white' : 'text-[#8b5a2b]'}`}>HU</button>
+                    {/* Sprachauswahl Oben Rechts */}
+                    <div className="absolute top-4 right-4 z-[1010]">
+                        <div className="flex overflow-hidden shadow-lg" style={{border: '2px solid #8b5a2b', background: 'rgba(44,30,22,0.85)', backdropFilter: 'blur(4px)'}}>
+                            <button onClick={() => setLanguage('de')} style={{fontFamily: "'Cinzel', serif", letterSpacing: '0.1em', background: language === 'de' ? '#8b5a2b' : 'transparent', color: language === 'de' ? '#fdf6e3' : '#c4956a'}} className="px-4 py-2 text-sm font-semibold transition-colors">DE</button>
+                            <div style={{width: '1px', background: '#8b5a2b'}}></div>
+                            <button onClick={() => setLanguage('hu')} style={{fontFamily: "'Cinzel', serif", letterSpacing: '0.1em', background: language === 'hu' ? '#8b5a2b' : 'transparent', color: language === 'hu' ? '#fdf6e3' : '#c4956a'}} className="px-4 py-2 text-sm font-semibold transition-colors">HU</button>
                         </div>
-                        <button onClick={openFullscreen} className="bg-[#fdf6e3] border-2 border-[#8b5a2b] p-2 text-[#8b5a2b] shadow-lg rounded-sm hover:bg-[#8b5a2b] hover:text-white transition-colors">
+                    </div>
+
+                    {/* Fullscreen Button Unten Rechts */}
+                    <div className="absolute bottom-8 right-4 z-[1010]">
+                        <button onClick={openFullscreen} className="flex items-center justify-center transition-colors shadow-lg"
+                            style={{width: '44px', height: '44px', border: '2px solid #8b5a2b', background: 'rgba(44,30,22,0.85)', backdropFilter: 'blur(4px)', color: '#c4956a'}}
+                            onMouseEnter={e => { e.currentTarget.style.background='#8b5a2b'; e.currentTarget.style.color='#fdf6e3'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background='rgba(44,30,22,0.85)'; e.currentTarget.style.color='#c4956a'; }}>
                             <IconMaximize />
                         </button>
                     </div>
 
-                    {/* Info Panel */}
-                    <div className="absolute bottom-0 left-0 right-0 z-[1000] p-2 md:top-0 md:left-4 md:w-[400px] md:h-full pointer-events-none flex flex-col justify-end md:justify-start">
-                        <div className={`bg-[#fdf6e3] border-4 border-double border-[#8b5a2b] rounded-t-xl md:rounded-sm shadow-2xl overflow-hidden pointer-events-auto panel-transition ${isPanelExpanded ? 'h-[75vh]' : 'h-[40vh] md:h-auto md:max-h-[90vh]'}`}>
-                            
-                            {/* Drag Handle Mobile */}
-                            <div className="md:hidden w-full flex justify-center py-2 cursor-pointer bg-[#f4ebd0]" onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
-                                <div className="w-12 h-1 bg-[#8b5a2b] opacity-30 rounded-full"></div>
+                    {/* Intro Panel */}
+                    {showIntro && (
+                        <div className="absolute bottom-0 left-0 right-0 z-[1000] pointer-events-none flex flex-col items-center justify-end md:justify-center md:bottom-auto md:top-0 md:h-full p-4">
+                            <div className="pointer-events-auto w-full md:w-[60vw] max-w-3xl overflow-hidden shadow-2xl"
+                                style={{border: '4px double #8b5a2b', background: 'rgba(44,30,22,0.82)', backdropFilter: 'blur(4px)'}}>
+                                {/* Hero Bild */}
+                                <div className="relative h-[28vh] md:h-[35vh] overflow-hidden">
+                                    <img src={introLoc.images[0]} className="w-full h-full object-cover" style={{filter: 'sepia(0.5) contrast(0.85) brightness(0.8)'}} />
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+                                        style={{background: 'linear-gradient(to bottom, rgba(44,30,22,0.3), rgba(44,30,22,0.75))'}}>
+                                        <p style={{fontFamily: "'Cinzel', serif", color: '#c4956a', fontSize: '0.75rem', letterSpacing: '0.3em'}} className="uppercase mb-3">
+                                            Südburgenland · Vas megye
+                                        </p>
+                                        <h1 className="font-display text-[#fdf6e3] text-3xl md:text-5xl leading-tight mb-3" style={{textShadow: '0 4px 16px rgba(0,0,0,0.8)'}}>
+                                            {language === 'de' ? 'Pannonische\nKulturroute' : 'Pannon\nKulturút'}
+                                        </h1>
+                                        <div style={{width: '60px', height: '2px', background: '#8b5a2b', margin: '0 auto'}}></div>
+                                    </div>
+                                </div>
+                                {/* Text */}
+                                <div className="p-6 md:p-10 text-center">
+                                    <p style={{fontFamily: "'Cormorant Garamond', serif", color: '#fdf6e3', fontSize: '1.2rem', lineHeight: 1.8, opacity: 0.92}}>
+                                        {introText}
+                                    </p>
+                                </div>
+                                {/* Start Button */}
+                                <div className="pb-8 flex justify-center gap-4 items-center">
+                                    <button onClick={toggleSpeech} className="p-2 border border-[#8b5a2b] rounded-full text-[#c4956a] hover:bg-[#8b5a2b] hover:text-white transition-colors">
+                                        {isSpeaking ? <IconSquare /> : <IconVolume />}
+                                    </button>
+                                    <button onClick={() => { setShowIntro(false); setCurrentIndex(1); }}
+                                        style={{fontFamily: "'Cinzel', serif", background: '#8b5a2b', color: '#fdf6e3', border: '2px solid #c4956a', letterSpacing: '0.15em'}}
+                                        className="px-8 py-3 text-sm uppercase hover:bg-[#c4956a] transition-colors">
+                                        {language === 'de' ? 'Route beginnen' : 'Útvonal kezdése'} ▶
+                                    </button>
+                                </div>
                             </div>
+                        </div>
+                    )}
 
-                            <div className="relative h-32 md:h-56 overflow-hidden border-b-2 border-[#8b5a2b]">
-                                <img src={loc.images[0]} className="w-full h-full object-cover sepia-effect" />
-                                <div className="absolute bottom-2 left-3 text-[#fdf6e3] drop-shadow-lg font-display text-xl">
-                                    {currentIndex + 1}. {currentName}
+                    {/* Info Panel – Stationen */}
+                    {!showIntro && (
+                    <div className="absolute bottom-0 left-0 right-0 z-[1000] p-2 md:top-12 md:left-[4vw] md:w-[480px] md:h-[calc(100vh-6rem)] pointer-events-none flex flex-col justify-end md:justify-start">
+                        <div className="rounded-t-xl md:rounded-sm shadow-2xl overflow-hidden pointer-events-auto flex flex-col h-[48vh] md:h-[80vh]"
+                            style={{border: '4px double #8b5a2b', background: 'rgba(44,30,22,0.85)', backdropFilter: 'blur(4px)'}}>
+
+                            {/* Bild mit Titel-Overlay */}
+                            <div className="relative h-32 md:h-52 flex-shrink-0 overflow-hidden">
+                                <img src={loc.images[0]} className="w-full h-full object-cover" style={{filter: 'sepia(0.5) contrast(0.85) brightness(0.75)'}} />
+                                <div className="absolute inset-0 flex flex-col justify-end px-4 pb-3"
+                                    style={{background: 'linear-gradient(to bottom, rgba(44,30,22,0.1), rgba(44,30,22,0.8))'}}>
+                                    <p style={{fontFamily: "'Cinzel', serif", color: '#c4956a', fontSize: '0.65rem', letterSpacing: '0.25em'}} className="uppercase mb-1">
+                                        Station {currentIndex}
+                                    </p>
+                                    <h2 className="font-display text-[#fdf6e3] text-xl md:text-2xl leading-tight tracking-wide" style={{textShadow: '0 2px 8px rgba(0,0,0,0.9)'}}>
+                                        {currentName}
+                                    </h2>
                                 </div>
                             </div>
 
-                            <div className="p-4 md:p-6 overflow-y-auto flex-grow bg-[#fdf6e3]">
-                                <div className="flex justify-between items-start mb-4">
-                                    <span className="text-[10px] uppercase tracking-widest text-[#8b5a2b] font-bold">
-                                        Station {currentIndex + 1}
-                                    </span>
-                                    <button onClick={toggleSpeech} className="p-2 border border-[#8b5a2b] rounded-full text-[#8b5a2b] hover:bg-[#8b5a2b] hover:text-white">
+                            {/* Trennlinie */}
+                            <div style={{height: '1px', background: 'linear-gradient(to right, transparent, #8b5a2b, transparent)'}}></div>
+
+                            {/* Text */}
+                            <div className="p-4 md:p-6 overflow-y-auto flex-grow min-h-0 flex flex-col gap-3">
+                                <div className="flex justify-end">
+                                    <button onClick={toggleSpeech} className="rounded-full transition-colors flex items-center justify-center"
+                                        style={{border: '1px solid #8b5a2b', color: '#c4956a', padding: '10px', width: '44px', height: '44px'}}
+                                        onMouseEnter={e => e.currentTarget.style.background='#8b5a2b'}
+                                        onMouseLeave={e => e.currentTarget.style.background='transparent'}>
                                         {isSpeaking ? <IconSquare /> : <IconVolume />}
                                     </button>
                                 </div>
-                                <h2 className="text-2xl font-display text-[#8b5a2b] mb-4 leading-tight">{currentName}</h2>
-                                <p className="text-[#3e2723] leading-relaxed text-base md:text-lg first-letter:text-4xl first-letter:font-display first-letter:float-left first-letter:mr-2">
+                                <p className="leading-relaxed text-lg md:text-xl first-letter:text-5xl first-letter:font-display first-letter:float-left first-letter:mr-2 first-letter:leading-none"
+                                    style={{fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: '#fdf6e3', opacity: 0.92}}>
                                     {currentText}
                                 </p>
                             </div>
 
                             {/* Navigation */}
-                            <div className="p-4 bg-[#f4ebd0] border-t-2 border-[#8b5a2b] flex items-center justify-between">
-                                <button onClick={() => setCurrentIndex(prev => (prev - 1 + locations.length) % locations.length)} className="w-10 h-10 border-2 border-[#8b5a2b] text-[#8b5a2b] hover:bg-[#8b5a2b] hover:text-white transition-colors">◀</button>
+                            <div className="p-4 flex items-center justify-between flex-shrink-0"
+                                style={{borderTop: '1px solid #8b5a2b', background: 'rgba(44,30,22,0.6)'}}>
+                                <button onClick={() => { if (currentIndex === 1) { setShowIntro(true); } else { setCurrentIndex(prev => prev - 1); } }}
+                                    className="transition-colors text-lg font-bold"
+                                    style={{border: '2px solid #8b5a2b', color: '#c4956a', width: '48px', height: '48px'}}
+                                    onMouseEnter={e => { e.currentTarget.style.background='#8b5a2b'; e.currentTarget.style.color='#fdf6e3'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#c4956a'; }}>◀</button>
                                 <div className="flex gap-1.5">
-                                    {locations.slice(0, 6).map((_, i) => (
-                                        <div key={i} onClick={() => setCurrentIndex(i)} className={`w-2 h-2 rotate-45 border border-[#8b5a2b] cursor-pointer ${i === currentIndex ? 'bg-[#8b5a2b] scale-125' : 'bg-white opacity-40'}`}></div>
-                                    ))}
+                                    {(() => {
+                                        const stations = locations.slice(1);
+                                        const windowSize = 7;
+                                        const half = Math.floor(windowSize / 2);
+                                        const si = currentIndex - 1;
+                                        const start = Math.max(0, Math.min(si - half, stations.length - windowSize));
+                                        return Array.from({length: Math.min(windowSize, stations.length)}).map((_, j) => {
+                                            const idx = start + j + 1;
+                                            return <div key={idx} onClick={() => setCurrentIndex(idx)} className="w-2 h-2 rotate-45 cursor-pointer transition-all"
+                                                style={{border: '1px solid #8b5a2b', background: idx === currentIndex ? '#c4956a' : 'transparent', opacity: idx === currentIndex ? 1 : 0.4, transform: idx === currentIndex ? 'rotate(45deg) scale(1.3)' : 'rotate(45deg)'}}></div>;
+                                        });
+                                    })()}
                                 </div>
-                                <button onClick={() => setCurrentIndex(prev => (prev + 1) % locations.length)} className="w-10 h-10 border-2 border-[#8b5a2b] text-[#8b5a2b] hover:bg-[#8b5a2b] hover:text-white transition-colors">▶</button>
+                                <button onClick={() => { if (currentIndex < locations.length - 1) setCurrentIndex(prev => prev + 1); }}
+                                    className="transition-colors text-lg font-bold"
+                                    style={{border: '2px solid #8b5a2b', color: '#c4956a', width: '48px', height: '48px'}}
+                                    onMouseEnter={e => { e.currentTarget.style.background='#8b5a2b'; e.currentTarget.style.color='#fdf6e3'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#c4956a'; }}>▶</button>
                             </div>
                         </div>
                     </div>
+                    )}
                 </div>
             );
         }
